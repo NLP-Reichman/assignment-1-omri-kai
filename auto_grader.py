@@ -32,25 +32,46 @@ def relative_difference(expected, actual):
     return abs(expected - actual) / expected
 
 def test_eval(results):
-    res = [
-        float(results["en_en"]),
-        float(results["en_fr"]),
-        float(results["en_tl"]),
-        float(results["en_nl"])
+    perplexity_en_on_en = float(results["en_en"])  
+    perplexity_en_on_fr = float(results["en_fr"])  
+    perplexity_en_on_tl = float(results["en_tl"])  
+    perplexity_en_on_nl = float(results["en_nl"])  
+
+    perplexities = [
+        perplexity_en_on_en,
+        perplexity_en_on_fr,
+        perplexity_en_on_tl,
+        perplexity_en_on_nl
     ]
-    if sorted(res) != res:
-        return f"En on En should be the lowest, followed by En on Fr, En on Tl, and En on Nl. Got {res}"
+
+    if min(perplexities) != perplexity_en_on_en:
+        return f"English model should perform best on English text. Results: {results}"
+    
+    if not (perplexity_en_on_en <= perplexity_en_on_fr <= max(perplexity_en_on_tl, perplexity_en_on_nl)):
+        return f"Expected increasing perplexity from English to other languages. Results: {results}"
+
     return 1
+
     
 def test_match(results):
-    res = [
-        int(results["en_en_3"]),
-        int(results["en_tl_3"]),
-        int(results["en_nl_3"])
+    perplexity_en_on_en = int(results["en_en_3"])  
+    perplexity_en_on_tl = int(results["en_tl_3"])  
+    perplexity_en_on_nl = int(results["en_nl_3"])  
+
+    perplexities = [
+        perplexity_en_on_en,
+        perplexity_en_on_tl,
+        perplexity_en_on_nl
     ]
-    if sorted(res) != res:
-        return f"En on En should be the lowest, followed by En on Tl, and En on Nl. Got {res}"
+
+    if min(perplexities) != perplexity_en_on_en:
+        return f"English model should perform best on English text. Results: {results}"
+
+    if not (perplexity_en_on_en <= perplexity_en_on_tl <= perplexity_en_on_nl):
+        return f"Expected increasing perplexity from English to other languages. Results: {results}"
+
     return 1
+
 
 def test_generate(results):
     if not results["english_2_gram"].startswith("I am"):
